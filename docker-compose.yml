@@ -1,0 +1,34 @@
+version: '3.1'
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_db
+    command: --init-file /data/application/init.sql
+    ports:
+      - 3307:3306
+    volumes:
+      - ./db/init.sql:/data/application/init.sql
+      - tareaDocker:/var/lib/mysql
+    networks:
+      - network1
+  api:
+    build: './api'
+    networks:
+      - network1
+      - network2
+  sh:
+    image : ubuntu:22.10
+    stdin_open: true
+    networks:
+      - network2
+networks:
+  network1:
+    driver: bridge
+  network2:
+    driver: bridge
+volumes:
+  tareaDocker:
+    external : true
